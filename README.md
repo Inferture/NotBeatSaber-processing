@@ -1,6 +1,8 @@
 # NotBeatSaber
 A rythm game made in processing where you will use accelerometers to play.
 
+In order to work, the files should be in a "NotBeatSaber" folder (NotBeatSaber/NotBeatSaber.pde ...")
+
 # Game Mode
 You can change the game mode in NotBeatSaber.pde. There are currently 2 game modes: Saving and Playing.
 
