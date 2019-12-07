@@ -40,7 +40,8 @@ int HEIGHT=600;
 float SCALE_HORIZON = 0.125;
 
 int points = 0;
-
+int combo = 0;
+int multiplier = 1;
 ArrayList<Line> lines;
 ArrayList<Block> blocks;
 ArrayList<Block> hittableBlocks;
@@ -80,6 +81,8 @@ color targetColor;
 boolean fastTransformation;
 
 SoundFile musicFile;
+
+
 
 void setup()  // runs once at start 
 {   
@@ -130,9 +133,15 @@ void setup()  // runs once at start
   lastFrameTime=startTime;
   lastColorUpdateTime=startTime;
     
-  //pattern.Serialize();
+    
   
   targetColor = RandomWallColor();
+  
+  PFont displayFont;
+  
+  displayFont = createFont("data/animeace2_reg.ttf", 12);
+  
+  textFont(displayFont);
   
 } 
 
@@ -198,6 +207,10 @@ void draw()  //loops forever
      
      if(blocks.get(i).transform.z<0)
      {
+       if(!blocks.get(i).hit)
+       {
+         combo=0;
+       }
         blocks.get(i).enabled=false; 
      }
   }
@@ -254,6 +267,13 @@ void Display()
   stroke(color(5,5,10));
   fill(color(5,5,10));
   rect(-HORIZON_WIDTH/2,-HORIZON_HEIGHT/2, HORIZON_WIDTH, HORIZON_HEIGHT);
+  
+  //Display infos
+  String infos = "Score: " + points + "\n";
+  infos+="Combo: " + combo+"\n";
+  infos+="Multiplier: " + multiplier;
+  fill(wallColor);
+  text(infos, -HORIZON_WIDTH/2,-HORIZON_HEIGHT/2, HORIZON_WIDTH, HORIZON_HEIGHT);
   
   //Display blocks
   //fill(color(20,30,70,240));
@@ -428,7 +448,8 @@ void keyPressed()
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
-             points++;
+             points+=multiplier;
+             combo++;
              print(points + "/");
          }
       }
@@ -442,7 +463,8 @@ void keyPressed()
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
-             points++;
+             points+=multiplier;
+             combo++;
              print(points + "/");
          }
       }
@@ -456,7 +478,8 @@ void keyPressed()
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
-             points++;
+             points+=multiplier;
+             combo++;
              print(points + "/");
          }
       }
@@ -470,7 +493,8 @@ void keyPressed()
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
-             points++;
+             points+=multiplier;
+             combo++;
              print(points + "/");
          }
       }
@@ -484,7 +508,8 @@ void keyPressed()
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
-             points++;
+             points+=multiplier;
+             combo++;
              print(points + "/");
          }
       }
@@ -498,10 +523,13 @@ void keyPressed()
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
-             points++;
+             points+=multiplier;
+             combo++;
              print(points + "/");
          }
       }
     }
+    multiplier = combo/10 +1;
+    
   }
 }
