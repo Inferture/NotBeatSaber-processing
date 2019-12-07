@@ -15,6 +15,7 @@ class Block extends GameObject
   boolean standing;
   boolean hittable=false;
   boolean hit=false;
+  int disappearTimer=0;
   BlockType type;
   
   int block_width;
@@ -22,8 +23,25 @@ class Block extends GameObject
   /**Draws the shape of the block as if it was in the origin, GameObject.display will place it correctly*/
    void Draw()
   {
+    if(!hit)
+    {
       rect(-block_width/2,-block_height/2,block_width,block_height);
-      //rect(0,0,100,100);
+    }
+    else
+    {
+      if(type==BlockType.RightUp || type==BlockType.RightDown || type == BlockType.LeftUp || type==BlockType.LeftDown)
+      {
+         float crack =block_width/20 * disappearTimer/DISAPPEAR_TIME;
+         rect(-block_width/2,-block_height/2,block_width/2 - crack,block_height);
+         rect(crack,-block_height/2,block_width/2-crack,block_height);
+      }
+      if(type==BlockType.Right|| type==BlockType.Left)
+      {
+         float crack =block_height/20* disappearTimer/DISAPPEAR_TIME;;
+         rect(-block_width/2,-block_height/2,block_width,block_height/2- crack);
+         rect(-block_width/2,crack,block_width,block_height/2-crack);
+      }
+    }
   }
   
   Block(boolean standing)

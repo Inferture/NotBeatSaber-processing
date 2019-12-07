@@ -64,6 +64,8 @@ color wallColor=color(20,65,0);
 float Z_HIT_RATIO=0.1;
 float Z_HIT_RATIO_TOLERANCE=0.05;
 
+int DISAPPEAR_TIME=200;
+
 
 
 static String MAIN_FOLDER;
@@ -109,11 +111,11 @@ void setup()  // runs once at start
   if(mode==GameMode.Playing)
   {
      pattern = Pattern.Deserialize(music);  
-     print(pattern.spawns.size());
+     /*print(pattern.spawns.size());
      print("-");
      print(pattern.spawns.get(0).time);
       print("-");
-     print(pattern.spawns.get(0).type);
+     print(pattern.spawns.get(0).type);*/
   }
   else
   {
@@ -254,11 +256,35 @@ void Display()
   rect(-HORIZON_WIDTH/2,-HORIZON_HEIGHT/2, HORIZON_WIDTH, HORIZON_HEIGHT);
   
   //Display blocks
-  fill(color(20,30,70,240));
+  //fill(color(20,30,70,240));
+  fill(RGBtoGBR(wallColor),240);
   stroke(color(70,0,70,240));
-  for(int i=0;i<blocks.size();i++)
+  for(int i=blocks.size()-1;i>=0;i--)
   {
-     blocks.get(i).Display(); 
+    if(blocks.get(i).hit)
+    {
+      float alpha = 240 - (float)blocks.get(i).disappearTimer/DISAPPEAR_TIME * 255;
+      if(alpha<=0)
+      {
+         blocks.get(i).enabled=false; 
+      }
+      else
+      {
+        //fill(color(20,30,70,alpha));
+        fill(RGBtoGBR(wallColor),alpha);
+        stroke(RGBtoGBR(wallColor),alpha);
+        blocks.get(i).Display(); 
+        fill(RGBtoGBR(wallColor),240);
+        //fill(color(20,30,70,240));
+        stroke(RGBtoGBR(wallColor),240);
+      }
+      blocks.get(i).disappearTimer+=deltaTime;
+    }
+    else
+    {
+      blocks.get(i).Display(); 
+    }
+     
   }
 }
 
@@ -341,6 +367,11 @@ color GetNextColor(color current, color target, int speed)
     return current;
 }
 
+color RGBtoGBR(color origin)
+{
+  return color(green(origin), blue(origin), red(origin));
+}
+
 
 /**What to do when a certain key is pressed*/
 void keyPressed()
@@ -396,7 +427,7 @@ void keyPressed()
          if(blocks.get(i).hittable && blocks.get(i).type==BlockType.RightUp)
          {
              blocks.get(i).hit=true;
-             blocks.get(i).enabled=false;
+             //blocks.get(i).enabled=false;
              points++;
              print(points + "/");
          }
@@ -410,7 +441,7 @@ void keyPressed()
          if(blocks.get(i).hittable && blocks.get(i).type==BlockType.Right)
          {
              blocks.get(i).hit=true;
-             blocks.get(i).enabled=false;
+             //blocks.get(i).enabled=false;
              points++;
              print(points + "/");
          }
@@ -424,7 +455,7 @@ void keyPressed()
          if(blocks.get(i).hittable && blocks.get(i).type==BlockType.RightDown)
          {
              blocks.get(i).hit=true;
-             blocks.get(i).enabled=false;
+             //blocks.get(i).enabled=false;
              points++;
              print(points + "/");
          }
@@ -438,7 +469,7 @@ void keyPressed()
          if(blocks.get(i).hittable && blocks.get(i).type==BlockType.LeftUp)
          {
              blocks.get(i).hit=true;
-             blocks.get(i).enabled=false;
+             //blocks.get(i).enabled=false;
              points++;
              print(points + "/");
          }
@@ -452,7 +483,7 @@ void keyPressed()
          if(blocks.get(i).hittable && blocks.get(i).type==BlockType.Left)
          {
              blocks.get(i).hit=true;
-             blocks.get(i).enabled=false;
+             //blocks.get(i).enabled=false;
              points++;
              print(points + "/");
          }
@@ -466,7 +497,7 @@ void keyPressed()
          if(blocks.get(i).hittable && blocks.get(i).type==BlockType.LeftDown)
          {
              blocks.get(i).hit=true;
-             blocks.get(i).enabled=false;
+             //blocks.get(i).enabled=false;
              points++;
              print(points + "/");
          }
