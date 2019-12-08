@@ -15,9 +15,13 @@ enum GameMode
 }
 
 
-
+/***GAME PARAMETERS TO CHANGE***/
 String music="MeltyBlood";
 GameMode mode=GameMode.Playing;
+/******************************/
+
+
+
 
 //Declare an Arduino object 
 Arduino arduino;  
