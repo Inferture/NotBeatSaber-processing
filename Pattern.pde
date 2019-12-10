@@ -1,7 +1,52 @@
 
 import java.io.*;
 
-static class Pattern implements Serializable 
+Pattern Deserialize(String name)
+  {
+     try
+      {
+        
+        /*
+        //JAVA Serial
+        FileInputStream patternFile=new FileInputStream(MAIN_FOLDER+"/"+name +".pattern");
+        ObjectInputStream o=new ObjectInputStream(patternFile);
+        Pattern pattern = (Pattern)o.readObject();
+        
+        o.close(); 
+        
+        return pattern;
+        */
+        
+        //JSON Serial
+        JSONObject json = loadJSONObject(MAIN_FOLDER+"/"+name +".json");
+        String jsonName = json.getString("name");
+        
+        
+        Pattern pattern = new Pattern(jsonName);
+        
+        JSONArray values = json.getJSONArray("spawns");
+        for (int i = 0; i < values.size(); i++) 
+        {
+          JSONObject value = values.getJSONObject(i);
+          int time = value.getInt("time");
+          BlockType type = GetValueType(value.getInt("type"));
+          pattern.Add(type,time);
+        }
+        return pattern;
+        
+      }
+    catch(Exception e)
+    {
+      print("problem when trying to open "+"dd" + " :" + e.toString());
+    }
+   /* catch(ClassNotFoundException e)
+    {
+       print("problem when trying to read class pattern "+"dd" + " :" + e.toString());
+    }*/
+    return null;
+  }
+  
+class Pattern//static class Pattern implements Serializable 
 {
   /*Speed ?*/
   /*Beat ? To associate with speed to get line frequency*/
@@ -29,39 +74,41 @@ static class Pattern implements Serializable
   {
     try
     {
-      FileOutputStream patternFile=new FileOutputStream(MAIN_FOLDER+"/"+name+".pattern",false);
+      //Java serial
+     /* FileOutputStream patternFile=new FileOutputStream(MAIN_FOLDER+"/"+name+".pattern",false);
       ObjectOutputStream o=new ObjectOutputStream(patternFile);
       o.writeObject(this);
-      o.close(); 
+      o.close(); */
+      
+      //JSON Serial
+      
+      JSONObject json = new JSONObject();
+      
+      JSONArray jsonSpawns = new JSONArray();
+
+    for (int i = 0; i < spawns.size(); i++) 
+    {
+        BlockSpawn spawn = spawns.get(i);
+        JSONObject jsonSpawn = new JSONObject();
+        jsonSpawn.setInt("time", spawn.time);
+        jsonSpawn.setInt("type", GetTypeValue(spawn.type));
+        jsonSpawns.setJSONObject(i, jsonSpawn);
     }
-    catch(IOException e)
+    
+    json.setString("name", name);
+    json.setJSONArray("spawns", jsonSpawns);
+      
+    
+    saveJSONObject(json, MAIN_FOLDER+"/"+name+".json");
+    
+    }
+    catch(Exception e)
     {
       print("problem when trying to open "+name + " :" + e.toString());
     }
   }
   
-  static Pattern Deserialize(String name)
-  {
-     try
-      {
-        FileInputStream patternFile=new FileInputStream(MAIN_FOLDER+"/"+name +".pattern");
-        ObjectInputStream o=new ObjectInputStream(patternFile);
-        Pattern pattern = (Pattern)o.readObject();
-        
-        o.close(); 
-        
-        return pattern;
-      }
-    catch(IOException e)
-    {
-      print("problem when trying to open "+"dd" + " :" + e.toString());
-    }
-    catch(ClassNotFoundException e)
-    {
-       print("problem when trying to read class pattern "+"dd" + " :" + e.toString());
-    }
-    return null;
-  }
+  
 }
 
 static  class BlockSpawn implements Serializable

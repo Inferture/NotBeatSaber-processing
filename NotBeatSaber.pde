@@ -8,6 +8,9 @@ import processing.sound.*;
 
 import cc.arduino.*;     //import  Arduino classes 
 
+
+
+
 enum GameMode
 {
    Playing,
@@ -18,16 +21,23 @@ enum GameMode
 /***GAME PARAMETERS TO CHANGE***/
 String music="MeltyBlood";
 GameMode mode=GameMode.Playing;
+int bpm=153;//the higher the bpm, the higher the frequency of lines coming towards you. Just for aesthetic purpose.
 /******************************/
-
 
 
 
 //Declare an Arduino object 
 Arduino arduino;  
-int pin =5;
-int ledPin = 13; 
 
+int RIGHT_ACCELEROMETER_X_PIN =5;
+int RIGHT_ACCELEROMETER_Y_PIN =6;
+int LEFT_ACCELEROMETER_X_PIN = 7; 
+int LEFT_ACCELEROMETER_Y_PIN = 8; 
+
+int ACCELERATION_TRESHOLD=50;
+
+
+//
 int BLOCK_WIDTH=200;
 int BLOCK_HEIGHT=600;
 
@@ -71,7 +81,8 @@ float Z_HIT_RATIO_TOLERANCE=0.05;
 
 int DISAPPEAR_TIME=200;
 
-
+float WON_BLOCK_COLOR_MULTIPLIER=1.3;
+float LOST_BLOCK_COLOR_MULTIPLIER=0.5;
 
 static String MAIN_FOLDER;
 
@@ -85,7 +96,7 @@ color targetColor;
 boolean fastTransformation;
 
 SoundFile musicFile;
-
+SoundFile cut;
 
 
 void setup()  // runs once at start 
@@ -93,6 +104,8 @@ void setup()  // runs once at start
   //println(Arduino.list());  // use this to get port# 
   
   MAIN_FOLDER=dataPath("");
+  LINE_PERIOD=(int) (1000*(float)60/(float)bpm);
+  
   lines=new ArrayList<Line>();
   blocks=new ArrayList<Block>();
   
@@ -117,7 +130,7 @@ void setup()  // runs once at start
   
   if(mode==GameMode.Playing)
   {
-     pattern = Pattern.Deserialize(music);  
+     pattern = Deserialize(music);  
      /*print(pattern.spawns.size());
      print("-");
      print(pattern.spawns.get(0).time);
@@ -130,23 +143,29 @@ void setup()  // runs once at start
   }
   
   
+  
+  
+  targetColor = RandomWallColor();
+  PFont displayFont;
+  displayFont = createFont("data/animeace2_reg.ttf", 12);
+  textFont(displayFont);
+  
+  
   musicFile = new SoundFile(this, "data/" + music + ".mp3");
+  musicFile.play();
+  
+  
+  cut = new SoundFile(this, "data/" + "cut.wav");
   musicFile.play();
   
   startTime=millis();
   lastFrameTime=startTime;
   lastColorUpdateTime=startTime;
-    
-    
   
-  targetColor = RandomWallColor();
   
-  PFont displayFont;
   
-  displayFont = createFont("data/animeace2_reg.ttf", 12);
-  
-  textFont(displayFont);
-  
+  launch(MAIN_FOLDER + "/tet.bat");
+  //exec("echo", " \"Salut\" > text.txt ");
 } 
 
 void draw()  //loops forever 
@@ -157,6 +176,21 @@ void draw()  //loops forever
   translate(WIDTH/2, HEIGHT/2);
   
   
+  
+  
+  /**/
+  //Check the accelerometer values
+  int right_x=0;
+  int right_y=0;
+  int left_x=0;
+  int left_y=0;
+  
+  accelerometerAction(right_x, right_y, left_x, left_y);
+  
+  //ARDUINOHERE
+  
+  
+  /****/
   //Changes road color
   if(wallColor==targetColor)
   {
@@ -273,15 +307,20 @@ void Display()
   rect(-HORIZON_WIDTH/2,-HORIZON_HEIGHT/2, HORIZON_WIDTH, HORIZON_HEIGHT);
   
   //Display infos
-  String infos = "Score: " + points + "\n";
-  infos+="Combo: " + combo+"\n";
-  infos+="Multiplier: " + multiplier;
-  fill(wallColor);
-  text(infos, -HORIZON_WIDTH/2,-HORIZON_HEIGHT/2, HORIZON_WIDTH, HORIZON_HEIGHT);
+  if(mode==GameMode.Playing)
+  {
+    String infos = "Score: " + points + "\n";
+    infos+="Combo: " + combo+"\n";
+    infos+="Multiplier: " + multiplier;
+    fill(wallColor);
+    text(infos, -HORIZON_WIDTH/2,-HORIZON_HEIGHT/2, HORIZON_WIDTH, HORIZON_HEIGHT);
+  }
+  
   
   //Display blocks
   //fill(color(20,30,70,240));
-  fill(RGBtoGBR(wallColor),240);
+  color blockColor = RGBtoGBR(wallColor);
+  fill(blockColor,240);
   stroke(color(70,0,70,240));
   for(int i=blocks.size()-1;i>=0;i--)
   {
@@ -295,14 +334,25 @@ void Display()
       else
       {
         //fill(color(20,30,70,alpha));
-        fill(RGBtoGBR(wallColor),alpha);
-        stroke(RGBtoGBR(wallColor),alpha);
+        color wonColor = MultiplyColor(blockColor, WON_BLOCK_COLOR_MULTIPLIER);
+        fill(wonColor,alpha);
+        stroke(wonColor,alpha);
         blocks.get(i).Display(); 
-        fill(RGBtoGBR(wallColor),240);
+        fill(blockColor,240);
         //fill(color(20,30,70,240));
-        stroke(RGBtoGBR(wallColor),240);
+        stroke(blockColor,240);
       }
       blocks.get(i).disappearTimer+=deltaTime;
+    }
+    else if(blocks.get(i).transform.z<(Z_HIT_RATIO-Z_HIT_RATIO_TOLERANCE)*Z0)
+    {
+        color lostColor = MultiplyColor(blockColor,LOST_BLOCK_COLOR_MULTIPLIER);
+        fill(lostColor,240);
+        stroke(lostColor,240);
+        blocks.get(i).Display(); 
+        
+        fill(blockColor,240);
+        stroke(blockColor,240);
     }
     else
     {
@@ -395,7 +445,112 @@ color RGBtoGBR(color origin)
 {
   return color(green(origin), blue(origin), red(origin));
 }
+color MultiplyColor(color c, float f)
+{
+   return color(red(c)*f, green(c)*f, blue(c)*f); 
+}
 
+
+/**Interprets accelerometer values and acts accordingly*/
+void accelerometerAction(int right_x, int right_y, int left_x, int left_y)
+{
+  //Right
+   if(right_x>ACCELERATION_TRESHOLD && right_x>abs(right_y))
+   {
+     for(int i=0;i<blocks.size();i++)
+      {
+         
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.Right)
+         {
+             blocks.get(i).hit=true;
+             points+=multiplier;
+             combo++;
+             cut.play();
+         }
+      }
+   }
+   
+   //RightUP
+   if(right_y>ACCELERATION_TRESHOLD && right_y>right_x)
+   {
+     for(int i=0;i<blocks.size();i++)
+      {
+         
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.RightUp)
+         {
+             blocks.get(i).hit=true;
+             points+=multiplier;
+             combo++;
+             cut.play();
+         }
+      }
+   }
+   
+   //RightDOWN
+   if(right_y<-ACCELERATION_TRESHOLD && right_y<-right_x)
+   {
+     for(int i=0;i<blocks.size();i++)
+      {
+         
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.RightDown)
+         {
+             blocks.get(i).hit=true;
+             points+=multiplier;
+             combo++;
+             cut.play();
+         }
+      }
+   }
+   
+   //Left
+   
+   if(left_x<-ACCELERATION_TRESHOLD && left_x<-abs(left_y))
+   {
+     for(int i=0;i<blocks.size();i++)
+      {
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.Left)
+         {
+             blocks.get(i).hit=true;
+             points+=multiplier;
+             combo++;
+             cut.play();
+         }
+      }
+   }
+   
+   //LeftUp
+   
+   if(left_y>ACCELERATION_TRESHOLD && left_y>-left_x)
+   {
+     for(int i=0;i<blocks.size();i++)
+      {
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.LeftUp)
+         {
+             blocks.get(i).hit=true;
+             points+=multiplier;
+             combo++;
+             cut.play();
+         }
+      }
+   }
+   
+   //LeftDown
+   if(left_y<-ACCELERATION_TRESHOLD && left_y<-left_x)
+   {
+     for(int i=0;i<blocks.size();i++)
+      {
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.LeftDown)
+         {
+             blocks.get(i).hit=true;
+             points+=multiplier;
+             combo++;
+             cut.play();
+         }
+      }
+   }
+   
+   
+}
 
 /**What to do when a certain key is pressed*/
 void keyPressed()
@@ -443,97 +598,136 @@ void keyPressed()
   //In playing mode, the blocks are destructed when the button is pressed at the right moment
   else if(mode==GameMode.Playing)
   {
-    if (key=='o' )
+    if (key=='o' || key=='O')
     {
       for(int i=0;i<blocks.size();i++)
       {
          
-         if(blocks.get(i).hittable && blocks.get(i).type==BlockType.RightUp)
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.RightUp)
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
              points+=multiplier;
              combo++;
-             print(points + "/");
+             //print(points + "/");
+             cut.play();
          }
       }
     } 
-    if (key=='m' )
+    if (key=='m' || key=='M')
     {
       for(int i=0;i<blocks.size();i++)
       {
          
-         if(blocks.get(i).hittable && blocks.get(i).type==BlockType.Right)
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.Right)
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
              points+=multiplier;
              combo++;
-             print(points + "/");
+             //print(points + "/");
+             cut.play();
          }
       }
     }
-    if (key=='l' )
+    if (key=='l' || key=='L')
     {
       for(int i=0;i<blocks.size();i++)
       {
          
-         if(blocks.get(i).hittable && blocks.get(i).type==BlockType.RightDown)
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.RightDown)
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
              points+=multiplier;
              combo++;
-             print(points + "/");
+             //print(points + "/");
+             cut.play();
          }
       }
     }
-    if (key=='z' )
+    if (key=='z' || key=='Z')
     {
        for(int i=0;i<blocks.size();i++)
       {
          
-         if(blocks.get(i).hittable && blocks.get(i).type==BlockType.LeftUp)
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.LeftUp)
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
              points+=multiplier;
              combo++;
-             print(points + "/");
+             //print(points + "/");
+             cut.play();
          }
       }
     } 
-    if (key=='q' )
+    if (key=='q' || key=='Q')
     {
       for(int i=0;i<blocks.size();i++)
       {
          
-         if(blocks.get(i).hittable && blocks.get(i).type==BlockType.Left)
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.Left)
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
              points+=multiplier;
              combo++;
-             print(points + "/");
+             //print(points + "/");
+             cut.play();
          }
       }
     }
-    if (key=='s' )
+    if (key=='s' || key=='S')
     {
       for(int i=0;i<blocks.size();i++)
       {
          
-         if(blocks.get(i).hittable && blocks.get(i).type==BlockType.LeftDown)
+         if(blocks.get(i).hittable && !blocks.get(i).hit && blocks.get(i).type==BlockType.LeftDown)
          {
              blocks.get(i).hit=true;
              //blocks.get(i).enabled=false;
              points+=multiplier;
              combo++;
-             print(points + "/");
+             //print(points + "/");
+             cut.play();
          }
       }
     }
     multiplier = combo/10 +1;
     
   }
+}
+
+ 
+  
+  
+static int GetTypeValue(BlockType type)
+{
+  switch(type)
+  {
+    case None:return 0;
+    case Right:return 1;
+    case RightUp: return 2;
+    case RightDown: return 3;
+    case Left:return 4;
+    case LeftUp:return 5;
+    case LeftDown: return 6;
+  }
+  return -1;
+}
+
+static BlockType GetValueType(int typeValue)
+{
+  switch(typeValue)
+  {
+    case 0:return BlockType.None;
+    case 1:return BlockType.Right;
+    case 2: return BlockType.RightUp;
+    case 3: return BlockType.RightDown;
+    case 4:return BlockType.Left;
+    case 5:return BlockType.LeftUp;
+    case 6: return BlockType.LeftDown;
+  }
+  return BlockType.None;
 }
