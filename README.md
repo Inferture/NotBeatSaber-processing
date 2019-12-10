@@ -55,5 +55,7 @@ If this is the case, the music should begin when launching the game.
 
 **L** to add a blocks at the bottom left
 
+**G** to save
+
 You should play the music with the beat (Press a button exactly on beat so that on Playing mode, 
 the player should also play it on beat).
