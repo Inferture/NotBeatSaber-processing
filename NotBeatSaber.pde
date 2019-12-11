@@ -19,16 +19,16 @@ enum GameMode
 
 
 /***GAME PARAMETERS TO CHANGE***/
-String music="MeltyBlood";
+String music="KRool";
 GameMode mode=GameMode.Playing;
-int bpm=153;//the higher the bpm, the higher the frequency of lines coming towards you. Just for aesthetic purpose.
+int bpm=140;//the higher the bpm, the higher the frequency of lines coming towards you. Just for aesthetic purpose.
 /******************************/
 
 
 
 //Declare an Arduino object 
 Arduino arduino;  
-
+//ARDUINOHERE
 int RIGHT_ACCELEROMETER_X_PIN =5;
 int RIGHT_ACCELEROMETER_Y_PIN =6;
 int LEFT_ACCELEROMETER_X_PIN = 7; 
@@ -83,6 +83,11 @@ int DISAPPEAR_TIME=200;
 
 float WON_BLOCK_COLOR_MULTIPLIER=1.3;
 float LOST_BLOCK_COLOR_MULTIPLIER=0.5;
+
+float MIN_BRIGHTNESS=1;
+float MAX_BRIGHTNESS=1;
+
+   
 
 static String MAIN_FOLDER;
 
@@ -286,7 +291,8 @@ void Display()
   triangle(0,0,-WIDTH/2, HEIGHT/2, -WIDTH/2, -HEIGHT/2);
   
   //Display lines
-  stroke(color(100,100,100));
+  stroke(MultiplyColor(wallColor,1.3),190);
+  //stroke(color(100,100,100));
   for(int i=0;i<lines.size();i++)
   {
      lines.get(i).Display(); 
@@ -319,11 +325,19 @@ void Display()
   
   //Display blocks
   //fill(color(20,30,70,240));
-  color blockColor = RGBtoGBR(wallColor);
-  fill(blockColor,240);
+  color blockColor1 = RGBtoGBR(wallColor);
+  color blockColor2 = RGBtoGBR(blockColor1);
+  
+  //fill(blockColor,240);
   stroke(color(70,0,70,240));
   for(int i=blocks.size()-1;i>=0;i--)
   {
+    color blockColor = blockColor1;
+    if(GetTypeValue(blocks.get(i).type)<=3)
+    {
+        blockColor = blockColor2;
+    }
+    fill(blockColor,240);
     if(blocks.get(i).hit)
     {
       float alpha = 240 - (float)blocks.get(i).disappearTimer/DISAPPEAR_TIME * 255;
@@ -384,15 +398,14 @@ void Ditch()
 /**Generates a random color for the road (not too dard, not too bright)*/
 color RandomWallColor()
 {
-   float min_brightness=255*3*0.3;
    
-   float max_brightness=255*3*0.7;
-  
+  float min_brightness=255*3*MIN_BRIGHTNESS;
+  float max_brightness=255*3*MAX_BRIGHTNESS;
    int r = int(random(255)); 
    int g = int(random(255));
    int b = int(random(255));
    
-   int brightness = r+g+b;
+   float brightness = max(r+g+b,1);
    
    if(r+g+b<min_brightness)
    {
@@ -407,6 +420,7 @@ color RandomWallColor()
       b*= max_brightness/brightness;
    }
    return color(r,g,b);
+   //return color(256,256,256);
 }
 
 /**Gets from a color current to a color target with the speed speed*/
