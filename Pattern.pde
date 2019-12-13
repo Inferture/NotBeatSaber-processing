@@ -5,24 +5,13 @@ Pattern Deserialize(String name)
   {
      try
       {
-        
-        /*
-        //JAVA Serial
-        FileInputStream patternFile=new FileInputStream(MAIN_FOLDER+"/"+name +".pattern");
-        ObjectInputStream o=new ObjectInputStream(patternFile);
-        Pattern pattern = (Pattern)o.readObject();
-        
-        o.close(); 
-        
-        return pattern;
-        */
-        
         //JSON Serial
         JSONObject json = loadJSONObject(MAIN_FOLDER+"/"+name +".json");
         String jsonName = json.getString("name");
+        String musicName = json.getString("musicName");
+        String artistName = json.getString("artistName");
         
-        
-        Pattern pattern = new Pattern(jsonName);
+        Pattern pattern = new Pattern(jsonName,musicName, artistName);
         
         JSONArray values = json.getJSONArray("spawns");
         for (int i = 0; i < values.size(); i++) 
@@ -37,12 +26,9 @@ Pattern Deserialize(String name)
       }
     catch(Exception e)
     {
-      print("problem when trying to open "+"dd" + " :" + e.toString());
+      print("problem when trying to deserialize " + " :" + e.toString());
     }
-   /* catch(ClassNotFoundException e)
-    {
-       print("problem when trying to read class pattern "+"dd" + " :" + e.toString());
-    }*/
+   
     return null;
   }
   
@@ -53,11 +39,24 @@ class Pattern//static class Pattern implements Serializable
   
   String name;
   
+  String musicName;
+  String artistName;
+  
   ArrayList<BlockSpawn> spawns;
   
   Pattern(String name)
   {
     this.name=name;
+    this.musicName=name;
+    this.artistName="";
+    spawns= new ArrayList<BlockSpawn>();
+  }
+  
+  Pattern(String name, String musicName, String artistName)
+  {
+    this.name=name;
+    this.musicName=musicName;
+    this.artistName=artistName;
     spawns= new ArrayList<BlockSpawn>();
   }
   
@@ -74,16 +73,7 @@ class Pattern//static class Pattern implements Serializable
   {
     try
     {
-      //Java serial
-     /* FileOutputStream patternFile=new FileOutputStream(MAIN_FOLDER+"/"+name+".pattern",false);
-      ObjectOutputStream o=new ObjectOutputStream(patternFile);
-      o.writeObject(this);
-      o.close(); */
-      
-      //JSON Serial
-      
       JSONObject json = new JSONObject();
-      
       JSONArray jsonSpawns = new JSONArray();
 
     for (int i = 0; i < spawns.size(); i++) 
@@ -96,8 +86,9 @@ class Pattern//static class Pattern implements Serializable
     }
     
     json.setString("name", name);
+    json.setString("musicName", musicName);
+    json.setString("artistName", artistName);
     json.setJSONArray("spawns", jsonSpawns);
-      
     
     saveJSONObject(json, MAIN_FOLDER+"/"+name+".json");
     

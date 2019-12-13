@@ -1,1 +1,0 @@
-echo "Salut" > "C:\Users\Q\Desktop\Travail\Arduino\Programmes\Processing\NotBeatSaber\test.txt"

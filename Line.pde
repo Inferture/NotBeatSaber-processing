@@ -10,28 +10,34 @@ class Line extends GameObject
   
   Line(int direction)
   {
+    
     this.direction=direction ;
+    int z = (int)Z0;
+    if(mode==GameMode.Saving)
+    {
+       z=(int)(Z_HIT_RATIO*Z0); 
+    }
     if(direction==0)
     {
-      transform = new Transform(0,-HEIGHT/2,(int)Z0);
+      transform = new Transform(0,-HEIGHT/2,z);
     }
     if(direction==1)
     {
-      transform = new Transform(-WIDTH/2,0,(int)Z0);
+      transform = new Transform(-WIDTH/2,0,z);
     }
     if(direction==2)
     {
-      transform =new Transform(0,HEIGHT/2,(int)Z0);
+      transform =new Transform(0,HEIGHT/2,z);
     }
     if(direction==3)
     {
-      transform = new Transform(WIDTH/2,0,(int)Z0);
+      transform = new Transform(WIDTH/2,0,z);
     }
   }
   
   
   
-  /**Draws the shape of the paddle in (0,0)*/
+  /**Draws the shape of the line in (0,0)*/
   void Draw()
   {
     
@@ -44,7 +50,6 @@ class Line extends GameObject
       line(0,-HEIGHT/2,0, HEIGHT/2);
       
     }
-     //rect(-WIDTH/2,-5,WIDTH,10);
   }
   
   

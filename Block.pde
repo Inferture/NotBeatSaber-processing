@@ -10,6 +10,38 @@ enum BlockType
   LeftUp,
   LeftDown
 }
+
+static int GetTypeValue(BlockType type)
+{
+  switch(type)
+  {
+    case None:return 0;
+    case Right:return 1;
+    case RightUp: return 2;
+    case RightDown: return 3;
+    case Left:return 4;
+    case LeftUp:return 5;
+    case LeftDown: return 6;
+  }
+  return -1;
+}
+
+static BlockType GetValueType(int typeValue)
+{
+  switch(typeValue)
+  {
+    case 0:return BlockType.None;
+    case 1:return BlockType.Right;
+    case 2: return BlockType.RightUp;
+    case 3: return BlockType.RightDown;
+    case 4:return BlockType.Left;
+    case 5:return BlockType.LeftUp;
+    case 6: return BlockType.LeftDown;
+  }
+  return BlockType.None;
+}
+
+/**Blocks that comes towards the player and that have to be cut*/
 class Block extends GameObject
 {
   boolean standing;
@@ -94,41 +126,46 @@ class Block extends GameObject
   Block(BlockType type)
   {
     this.type=type;
+    int z = (int)Z0;
+    if(mode==GameMode.Saving)
+    {
+       z=(int)(Z_HIT_RATIO*Z0); 
+    }
     if(type==BlockType.Right)
     {
       block_width = WIDTH/4;
       block_height=HEIGHT/2;
-      transform = new Transform(WIDTH/2-block_width/2, 0, (int)Z0, PI);
+      transform = new Transform(WIDTH/2-block_width/2, 0, z, PI);
     }
     else if(type==BlockType.RightDown)
     {
       block_width = WIDTH/3;
       block_height=HEIGHT/4;
-      transform = new Transform(WIDTH/4, HEIGHT/2-block_height/2, (int)Z0, PI);
+      transform = new Transform(WIDTH/4, HEIGHT/2-block_height/2, z, PI);
     }
     else if(type==BlockType.RightUp)
     {
       block_width = WIDTH/3;
       block_height=HEIGHT/4;
-      transform = new Transform(WIDTH/4, -HEIGHT/2+block_height/2, (int)Z0);
+      transform = new Transform(WIDTH/4, -HEIGHT/2+block_height/2, z);
     }
     else if(type==BlockType.Left)
     {
       block_width = WIDTH/4;
       block_height=HEIGHT/2;
-      transform = new Transform(-WIDTH/2+block_width/2, 0, (int)Z0);
+      transform = new Transform(-WIDTH/2+block_width/2, 0, z);
     }
     else if(type==BlockType.LeftDown)
     {
       block_width = WIDTH/3;
       block_height=HEIGHT/4;
-      transform = new Transform(-WIDTH/4, HEIGHT/2-block_height/2, (int)Z0, PI);
+      transform = new Transform(-WIDTH/4, HEIGHT/2-block_height/2, z, PI);
     }
     else //(BlockType.LeftUp)
     {
       block_width = WIDTH/3;
       block_height=HEIGHT/4;
-      transform = new Transform(-WIDTH/4, -HEIGHT/2+block_height/2, (int)Z0);
+      transform = new Transform(-WIDTH/4, -HEIGHT/2+block_height/2, z);
     }
     enabled=true;
   }
