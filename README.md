@@ -13,11 +13,11 @@ In order to work, the files should be in a "NotBeatSaber" folder (NotBeatSaber/N
 You can navigate in the menu using the arrows and the enter key.
 
 ## Playing:
-This game is made to play an existing map.
+This mode is made to play an existing map.
 
 For the music to be available, there must be a file music.mp3 and a pattern file music.json in the data folder.
 
-For example, if **music = "MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** and a pattern **"MeltyBlood.json"** 
+For example, if the music is **"MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** and a pattern **"MeltyBlood.json"** 
 in the data folder. 
 
 ### Controls:
@@ -42,7 +42,7 @@ This game is made to create a map.
 
 For this, the  music must be a valid .mp3 inside the data folder.
 
-For example, if **music = "MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** in the data folder. 
+For example, if the music is **"MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** in the data folder. 
 
 
 ### Controls:
