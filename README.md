@@ -15,12 +15,10 @@ You can navigate in the menu using the arrows and the enter key.
 ## Playing:
 This game is made to play an existing map.
 
-For this, the String music must reference a valid .mp3 and a valid .pattern in the data folder.
+For the music to be available, there must be a file music.mp3 and a pattern file music.json in the data folder.
 
-For example, if **music = "MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** and a .pattern **"MeltyBlood.pattern"** 
+For example, if **music = "MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** and a pattern **"MeltyBlood.json"** 
 in the data folder. 
-
-If this is the case, the music and the pattern should begin when launching the game.
 
 ### Controls:
 
@@ -42,11 +40,10 @@ You can destroy blocks when they are between the 2 orange frames
 ## Saving:
 This game is made to create a map.
 
-For this, the String music must reference a valid .mp3 in the data folder.
+For this, the  music must be a valid .mp3 inside the data folder.
 
 For example, if **music = "MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** in the data folder. 
 
-If this is the case, the music should begin when launching the game.
 
 ### Controls:
 **Q** to add a blocks at the right
@@ -67,3 +64,6 @@ If this is the case, the music should begin when launching the game.
 
 You should play the music with the beat (Press a button exactly on beat so that on Playing mode, 
 the player should also play it on beat).
+
+
+Have fun !
