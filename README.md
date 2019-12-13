@@ -65,5 +65,10 @@ For example, if the music is **"MeltyBlood"**, there must be a .mp3 **"MeltyBloo
 You should play the music with the beat (Press a button exactly on beat so that on Playing mode, 
 the player should also play it on beat).
 
+##Add a music:
+Add a file .mp3 in the data folder and map it by selecting "Make a pattern" in the menu and choosing the name of your file.
+Don't forget to save with g when you finish the mapping !
+
+
 
 Have fun !
