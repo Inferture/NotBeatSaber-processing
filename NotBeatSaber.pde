@@ -1,6 +1,5 @@
 
 import processing.serial.*;
-import http.requests.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.*;
