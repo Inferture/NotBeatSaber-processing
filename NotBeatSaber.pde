@@ -772,7 +772,7 @@ void keyPressed()
     //In playing mode, the blocks are destructed when the button is pressed at the right moment
     else if(mode==GameMode.Playing)
     {
-      if (key=='o' || key=='O')
+      if (key=='o' || key=='O' ||keyCode==UP)
       {
         for(int i=0;i<blocks.size();i++)
         {
@@ -788,7 +788,7 @@ void keyPressed()
            }
         }
       } 
-      if (key=='m' || key=='M')
+      if (key=='m' || key=='M' ||keyCode==RIGHT)
       {
         for(int i=0;i<blocks.size();i++)
         {
@@ -804,7 +804,7 @@ void keyPressed()
            }
         }
       }
-      if (key=='l' || key=='L')
+      if (key=='l' || key=='L'||keyCode==DOWN)
       {
         for(int i=0;i<blocks.size();i++)
         {
@@ -820,7 +820,7 @@ void keyPressed()
            }
         }
       }
-      if (key=='z' || key=='Z')
+      if (key=='z' || key=='Z' || key=='w' || key=='W')
       {
          for(int i=0;i<blocks.size();i++)
         {
@@ -836,7 +836,7 @@ void keyPressed()
            }
         }
       } 
-      if (key=='q' || key=='Q')
+      if (key=='q' || key=='Q' || key=='a' || key=='A')
       {
         for(int i=0;i<blocks.size();i++)
         {
