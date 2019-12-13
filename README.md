@@ -3,8 +3,8 @@ A rythm game made in processing where you will use accelerometers to play.
 
 In order to work, the files should be in a "NotBeatSaber" folder (NotBeatSaber/NotBeatSaber.pde ...")
 
-# Game Mode
-You can change the game mode in NotBeatSaber.pde. There are currently 2 game modes: Saving and Playing.
+## Menu
+You can navigate in the menu using the arrows and the enter key.
 
 ## Playing:
 This game is made to play an existing map.
@@ -56,6 +56,8 @@ If this is the case, the music should begin when launching the game.
 **L** to add a blocks at the bottom left
 
 **G** to save
+
+**Left Arrow** to rewind
 
 You should play the music with the beat (Press a button exactly on beat so that on Playing mode, 
 the player should also play it on beat).
