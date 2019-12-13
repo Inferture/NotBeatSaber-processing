@@ -728,28 +728,28 @@ void keyPressed()
     //In saving mode, we add blocks when the buttons are pressed
     if(mode==GameMode.Saving)
     {
-      if (key=='o' || key=='O')
+      if (key=='o' || key=='O'||keyCode==UP)
       {
         pattern.Add(BlockType.RightUp, millis()-startTime);
         blocks.add(new Block(BlockType.RightUp));
         
       } 
-      if (key=='m' || key=='M')
+      if (key=='m' || key=='M'||key==';' ||keyCode==RIGHT)
       {
         pattern.Add(BlockType.Right, millis()-startTime);
         blocks.add(new Block(BlockType.Right));
       }
-      if (key=='l' || key=='L')
+      if (key=='l' || key=='L'||keyCode==DOWN)
       {
         pattern.Add(BlockType.RightDown, millis()-startTime);
         blocks.add(new Block(BlockType.RightDown));
       }
-      if (key=='z' || key=='Z')
+      if (key=='z' || key=='Z'|| key=='w' || key=='W')
       {
         pattern.Add(BlockType.LeftUp, millis()-startTime);
         blocks.add(new Block(BlockType.LeftUp));
       } 
-      if (key=='q' || key=='Q')
+      if (key=='q' || key=='Q'|| key=='a' || key=='A')
       {
         pattern.Add(BlockType.Left, millis()-startTime);
         blocks.add(new Block(BlockType.Left));
@@ -788,7 +788,7 @@ void keyPressed()
            }
         }
       } 
-      if (key=='m' || key=='M' ||keyCode==RIGHT)
+      if (key=='m' || key=='M'||key==';' ||keyCode==RIGHT)
       {
         for(int i=0;i<blocks.size();i++)
         {
