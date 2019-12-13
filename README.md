@@ -1,7 +1,13 @@
 # NotBeatSaber
-A rythm game made in processing where you will use accelerometers to play.
+A rythm game made in processing where can map your own sounds.
+
+To open the project, you can use [processing](https://processing.org/).
+
+You'll need the Sound library and the Hardware I/O library.
 
 In order to work, the files should be in a "NotBeatSaber" folder (NotBeatSaber/NotBeatSaber.pde ...")
+
+
 
 ## Menu
 You can navigate in the menu using the arrows and the enter key.
