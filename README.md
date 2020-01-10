@@ -20,6 +20,8 @@ For the music to be available, there must be a file music.mp3 and a pattern file
 For example, if the music is **"MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** and a pattern **"MeltyBlood.json"** 
 in the data folder. 
 
+![](https://media.giphy.com/media/lN9geFOynllLuaEC7S/giphy.gif)
+
 ### Controls:
 
 **Q** to destroy blocks at the right
@@ -43,6 +45,8 @@ This game is made to create a map.
 For this, the  music must be a valid .mp3 inside the data folder.
 
 For example, if the music is **"MeltyBlood"**, there must be a .mp3 **"MeltyBlood.mp3"** in the data folder. 
+
+![](https://media.giphy.com/media/XgYhMA1uUcpjhx648r/giphy.gif)
 
 
 ### Controls:
