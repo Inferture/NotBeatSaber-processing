@@ -708,11 +708,11 @@ void keyPressed()
   {
     if(musics.size()>0)
     {
-       if(keyCode==UP)
+       if(keyCode==DOWN)
        {
           currentMusic = (currentMusic+1) % musics.size();
        }
-       if(keyCode==DOWN)
+       if(keyCode==UP)
        {
           currentMusic = (currentMusic-1 +musics.size()) % musics.size();
        }

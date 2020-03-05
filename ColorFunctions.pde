@@ -1,4 +1,4 @@
-/**Generates a random color for the road (not too dard, not too bright)*/
+/**Generates a random color for the road (not too dark, not too bright)*/
 color RandomWallColor()
 {
    
